@@ -3,17 +3,21 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 
-	"github.com/moalf/passgen/api"
+	"github.com/moalf/passgen/server"
 )
 
-const port = "8080"
+const (
+	address = "127.0.0.1"
+	port    = 8080
+)
 
 func main() {
-	http.HandleFunc("/status", api.Status)
-	http.HandleFunc("/", api.GetPassword)
+	server := server.NewHttpServer(address, port)
 
-	fmt.Printf("Starting server at port %s\n", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	fmt.Printf("Starting server on %s:%d\n", address, port)
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

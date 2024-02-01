@@ -2,9 +2,11 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/moalf/passgen/rndstr"
 )
@@ -99,4 +101,11 @@ func Status(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(status)
+}
+
+func LogRequest(handler http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf(" %v: %s %s %s %s %s\n", time.Now().Format("2006-01-02 15:04:05.000"), r.Method, r.Host, r.RemoteAddr, r.RequestURI, r.UserAgent())
+		handler(w, r)
+	}
 }
